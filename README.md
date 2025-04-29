@@ -1,4 +1,10 @@
-# Java_project
-repo for the Java Project
+# **Catan_recoded**
 
-und Deine Mudda
+Repository for the Java Semester 2 Projekt
+
+## Teammitglieder
+
+- Nikolas
+- Kay
+- Gerhard
+- Jakob
