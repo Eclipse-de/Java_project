@@ -1,0 +1,14 @@
+Aufzählung der verschiedenen Felder
+
+- Wald
+- Weide
+- Weizenfelder
+- Lehmhügel
+- Gebirge
+- Wüste
+
+- Meer
+- Hafen
+- Goldfluss
+
+Eigenkreation: See
