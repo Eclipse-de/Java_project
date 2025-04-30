@@ -5,6 +5,6 @@ Repository for the Java Semester 2 Projekt
 ## Teammitglieder
 
 - Nicolas
-- Kay
+- Ha Gayyyyyy
 - Gerhard
 - Jakob
