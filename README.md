@@ -4,8 +4,8 @@ Repository for the Semester 2 Java Projekt
 
 ## Hotten Totten - Teammitglieder
 
-- Nikolas
-- Kay
+- Nicolas
+- Ha Gayyyyyy
 - Gerhard
 - Jakob
 
