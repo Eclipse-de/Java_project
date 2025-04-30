@@ -1,10 +1,42 @@
 # **Catan_recoded**
 
-Repository for the Java Semester 2 Projekt
+Repository for the Semester 2 Java Projekt
 
-## Teammitglieder
+## Hotten Totten - Teammitglieder
 
 - Nikolas
 - Kay
 - Gerhard
 - Jakob
+
+## Requirements
+
+### Mode
+
+- [ ] Single-Player-Mode
+- [ ] 1-4-Multiplayer-Mode
+
+### Savegame
+
+- [ ] Spielstand speichern
+- [ ] Spielstand laden
+- [ ] Spielstand löschen
+
+### device-Communication
+
+- [ ] Bluetooth connection
+- [ ] P2P connection
+- [ ] Wifi-Hotspot connection
+- [ ] Communication
+- [ ] Reconnection
+
+### Randomization
+
+- [ ] Zufallsgenerator random()
+- [ ] Werteverteilung (Gleichverteilt / Glockenverteilung)
+
+### Settings
+
+- [ ] Language (Deutsch, English)
+- [ ] Extended Rules
+- [ ] Google-Play
