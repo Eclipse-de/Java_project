@@ -1,0 +1,1 @@
+// Spieler-Klasse mit Stats und Handlungsmöglichkeiten für den Spieler

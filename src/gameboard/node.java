@@ -1,0 +1,1 @@
+// Ecken eines Hexteils
