@@ -1,3 +1,5 @@
-// platzierbares Objekt
+package catan.game.building;
 
-public class Building {}
+public class building {
+
+}

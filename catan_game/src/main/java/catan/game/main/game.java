@@ -1,1 +1,5 @@
-// "Main"-Klasse die den Spielablauf regelt
+package catan.game.main;
+
+public class game {
+
+}

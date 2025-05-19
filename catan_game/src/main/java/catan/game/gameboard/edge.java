@@ -1,1 +1,5 @@
-// Kante eines Hexteils
+package catan.game.gameboard;
+
+public class edge {
+
+}

@@ -1,1 +1,5 @@
-// Ecken eines Hexteils
+package catan.game.gameboard;
+
+public class node {
+
+}

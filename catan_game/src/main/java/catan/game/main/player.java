@@ -1,1 +1,5 @@
-// Spieler-Klasse mit Stats und Handlungsmöglichkeiten für den Spieler
+package catan.game.main;
+
+public class player {
+
+}
