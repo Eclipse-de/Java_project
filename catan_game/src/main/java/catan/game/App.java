@@ -1,13 +1,19 @@
-package catan.game;
+// JavaFX Ui Klass
 
-/**
- * Hello world!
- *
- */
-public class App 
-{
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+
+public class Application extends Application{
+    @Override
+    publix void start(Stage stage) {
+        Label label = new Label("Hello, JavaFX with Maven!");
+        Scene scene = new Scene(new StackPane(label), 400, 300);
+        stage.setScene(scene);
+        stage.setTitle("JavaFX App");
+        stage.show(); 
     }
+    
 }
