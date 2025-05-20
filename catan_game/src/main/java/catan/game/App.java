@@ -1,3 +1,4 @@
+package catan.game;
 // JavaFX Ui Klass
 
 import javafx.application.Application;
