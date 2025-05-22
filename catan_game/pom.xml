@@ -81,7 +81,7 @@
             <executions>
                 <execution>
                     <goals>
-                        <goal>run</goal>
+                        <goal>java.catan.app</goal>
                     </goals>
                 </execution>
             </executions>
