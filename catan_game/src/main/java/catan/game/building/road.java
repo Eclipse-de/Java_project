@@ -4,7 +4,7 @@ import catan.game.gameboard.node;
 import catan.game.main.player;
 
 public class road extends building {
-    public road(player owner, node location) {
+    public road(final player owner, final node location) {
         super(owner, location);
     }
 

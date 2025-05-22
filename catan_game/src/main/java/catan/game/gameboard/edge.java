@@ -1,10 +1,10 @@
 package catan.game.gameboard;
 
 public class edge {
-    private node nodeA;
-    private node nodeB;
+    private final node nodeA;
+    private final node nodeB;
 
-    public edge(node nodeA, node nodeB) {
+    public edge(final node nodeA, final node nodeB) {
         this.nodeA = nodeA;
         this.nodeB = nodeB;
     }

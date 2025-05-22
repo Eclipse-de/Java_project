@@ -4,7 +4,7 @@ import catan.game.gameboard.node;
 import catan.game.main.player;
 
 public class settlement extends building {
-    public settlement(player owner, node location) {
+    public settlement(final player owner, final node location) {
         super(owner, location);
     }
 

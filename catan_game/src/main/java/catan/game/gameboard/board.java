@@ -3,11 +3,11 @@ package catan.game.gameboard;
 import java.util.List;
 
 public class board {
-    private List<tile> tiles;
-    private List<node> nodes;
-    private List<edge> edges;
+    private final List<tile> tiles;
+    private final List<node> nodes;
+    private final List<edge> edges;
 
-    public board(List<tile> tiles, List<node> nodes, List<edge> edges) {
+    public board(final List<tile> tiles, final List<node> nodes, final List<edge> edges) {
         this.tiles = tiles;
         this.nodes = nodes;
         this.edges = edges;

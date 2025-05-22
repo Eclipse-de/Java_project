@@ -1,10 +1,10 @@
 package catan.game.gameboard;
 
 public class node {
-    private int x;
-    private int y;
+    private final int x;
+    private final int y;
 
-    public node(int x, int y) {
+    public node(final int x, final int y) {
         this.x = x;
         this.y = y;
     }

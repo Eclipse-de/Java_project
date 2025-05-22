@@ -1,10 +1,10 @@
 package catan.game.main;
 
 public class player {
-    private String name;
-    private int id;
+    private final String name;
+    private final int id;
 
-    public player(int id, String name) {
+    public player(final int id, final String name) {
         this.id = id;
         this.name = name;
     }

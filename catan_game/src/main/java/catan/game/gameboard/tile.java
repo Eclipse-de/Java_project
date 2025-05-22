@@ -1,10 +1,10 @@
 package catan.game.gameboard;
 
 public class tile {
-    private String resourceType;
-    private int numberToken;
+    private final String resourceType;
+    private final int numberToken;
 
-    public tile(String resourceType, int numberToken) {
+    public tile(final String resourceType, final int numberToken) {
         this.resourceType = resourceType;
         this.numberToken = numberToken;
     }
