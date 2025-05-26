@@ -1,0 +1,13 @@
+catan\game\building\city.class
+catan\game\main\player.class
+catan\game\main\game.class
+catan\game\gameboard\board.class
+catan\game\gameboard\tile.class
+catan\game\GameBoardController.class
+catan\game\gameboard\edge.class
+catan\game\App.class
+Main.class
+catan\game\building\settlement.class
+catan\game\gameboard\node.class
+catan\game\building\road.class
+catan\game\building\building.class
