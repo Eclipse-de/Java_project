@@ -1,32 +1,110 @@
 package catan.game;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.event.ActionEvent;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Objects;
+
+
+import java.util.Objects;
+import java.util.Random;
 
 public class GameBoardController {
 
     @FXML
-    private Button rollDiceButton;
-
-    @FXML
-    public void handleRollDice() {
-        System.out.println("Würfel wurde gedrückt");
-        // Würfeln-Logik
+    private void handleRollDice(ActionEvent event) {
+        System.out.println("Würfeln gedrückt!");
     }
 
     @FXML
-    public void handleBuildRoad() {
+    private void handleBuildRoad(ActionEvent event) {
         System.out.println("Straße bauen gedrückt!");
-        // Baulogik hier
     }
 
     @FXML
-    public void handleEndTurn() {
-        System.out.println("Zug beendet.");
+    private void handleEndTurn(ActionEvent event) {
+        System.out.println("Zug beenden gedrückt!");
     }
 
     @FXML
+    private Pane boardPane;
+
+    private static class HexTile {
+        String resource;
+        double x;
+        double y;
+
+        HexTile(String resource, double x, double y) {
+            this.resource = resource;
+            this.x = x;
+            this.y = y;
+        }
+    }
+
     public void initialize() {
-        // Wird beim Laden automatisch aufgerufen
+        // Hexfeld-Größe
+        double hexWidth = 150;
+        double hexHeight = 185;
+        double xOffset = hexWidth + 8; // horizontaler Abstand
+        double yOffset = hexHeight - 40; // vertikaler Abstand
+
+        // Hex-Layout definieren (Spalten + Zeilen)
+        int[] rowLengths = {3, 4, 5, 4, 3};
+        List<String> resources = new ArrayList<>(Arrays.asList(
+                "Holz", "Lehm", "Weizen", "Wolle", "Erz",
+                "Holz", "Lehm", "Wüste", "Wolle", "Weizen",
+                "Erz", "Wolle", "Holz", "Lehm", "Weizen",
+                "Erz", "Wolle", "Weizen", "Holz"
+        ));
+
+        Collections.shuffle(resources); // für Zufallsverteilung (oder auslassen)
+
+        List<HexTile> tiles = new ArrayList<>();
+        double startY = 18;
+        int resIndex = 0;
+        for (int row = 0; row < rowLengths.length; row++) {
+            int count = rowLengths[row];
+            double startX = 404 - (count * xOffset) / 2;
+
+            for (int i = 0; i < count; i++) {
+                tiles.add(new HexTile(resources.get(resIndex++), startX + i * xOffset, startY));
+            }
+            startY += yOffset;
+        }
+
+        for (HexTile tile : tiles) {
+            String imagePath = switch (tile.resource) {
+                case "Holz" -> "/catan/game/images/hexagon_wood.png";
+                case "Lehm" -> "/catan/game/images/hexagon_clay.png";
+                case "Weizen" -> "/catan/game/images/hexagon_wheat.png";
+                case "Wolle" -> "/catan/game/images/hexagon_sheep.png";
+                case "Erz" -> "/catan/game/images/hexagon_ore.png";
+                default -> "/catan/game/images/hexagon_desert.png";
+            };
+
+            ImageView img = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))));
+            img.setFitWidth(hexWidth);
+            img.setFitHeight(hexHeight);
+            img.setLayoutX(tile.x);
+            img.setLayoutY(tile.y);
+            boardPane.getChildren().add(img);
+        }
+
+        // Wasserbild (als Hintergrund oder extra Tiles)
+        ImageView water = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/catan/game/images/map_standard.png"))));
+        water.setFitWidth(800);
+        water.setFitHeight(800);
+        water.setLayoutX(0);
+        water.setLayoutY(0);
+        boardPane.getChildren().addFirst(water); // ganz nach hinten
     }
 }
