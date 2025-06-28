@@ -15,6 +15,17 @@ public class GameBoardController {
     }
 
     @FXML
+    public void handleBuildRoad() {
+        System.out.println("Straße bauen gedrückt!");
+        // Baulogik hier
+    }
+
+    @FXML
+    public void handleEndTurn() {
+        System.out.println("Zug beendet.");
+    }
+
+    @FXML
     public void initialize() {
         // Wird beim Laden automatisch aufgerufen
     }
