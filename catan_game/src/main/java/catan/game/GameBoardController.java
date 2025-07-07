@@ -1,10 +1,7 @@
 package catan.game;
 
 import javafx.fxml.FXML;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -13,10 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
-
-
-import java.util.Objects;
-import java.util.Random;
 
 public class GameBoardController {
 
@@ -51,13 +44,11 @@ public class GameBoardController {
     }
 
     public void initialize() {
-        // Hexfeld-Größe
-        double hexWidth = 150;
+        double hexWidth = 160;
         double hexHeight = 185;
-        double xOffset = hexWidth + 8; // horizontaler Abstand
-        double yOffset = hexHeight - 40; // vertikaler Abstand
+        double xOffset = hexWidth - 2;
+        double yOffset = hexHeight - 40;
 
-        // Hex-Layout definieren (Spalten + Zeilen)
         int[] rowLengths = {3, 4, 5, 4, 3};
         List<String> resources = new ArrayList<>(Arrays.asList(
                 "Holz", "Lehm", "Weizen", "Wolle", "Erz",
@@ -66,14 +57,14 @@ public class GameBoardController {
                 "Erz", "Wolle", "Weizen", "Holz"
         ));
 
-        Collections.shuffle(resources); // für Zufallsverteilung (oder auslassen)
+        Collections.shuffle(resources);
 
         List<HexTile> tiles = new ArrayList<>();
         double startY = 18;
         int resIndex = 0;
         for (int row = 0; row < rowLengths.length; row++) {
             int count = rowLengths[row];
-            double startX = 404 - (count * xOffset) / 2;
+            double startX = 400 - (count * xOffset) / 2;
 
             for (int i = 0; i < count; i++) {
                 tiles.add(new HexTile(resources.get(resIndex++), startX + i * xOffset, startY));
@@ -99,12 +90,14 @@ public class GameBoardController {
             boardPane.getChildren().add(img);
         }
 
-        // Wasserbild (als Hintergrund oder extra Tiles)
-        ImageView water = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/catan/game/images/map_standard.png"))));
-        water.setFitWidth(800);
-        water.setFitHeight(800);
-        water.setLayoutX(0);
-        water.setLayoutY(0);
-        boardPane.getChildren().addFirst(water); // ganz nach hinten
+        ImageView map_standard = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/catan/game/images/map_standard.png"))));
+        map_standard.setFitWidth(800);
+        map_standard.setFitHeight(800);
+        map_standard.setLayoutX(0);
+        map_standard.setLayoutY(0);
+        boardPane.getChildren().add(map_standard);
+
+        map_standard.toFront();
+
     }
 }
