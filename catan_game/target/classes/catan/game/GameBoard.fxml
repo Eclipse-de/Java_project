@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
@@ -14,19 +15,17 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="800" prefWidth="1200" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="catan.game.GameBoardController">
-   <HBox>
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="catan.game.GameBoardController">
+   <HBox alignment="TOP_RIGHT">
       <children>
-            <Pane fx:id="boardPane">
-                <!-- Hintergrundbild des Spielfeldes -->
-                <ImageView fx:id="backgroundImage" fitHeight="800.0" fitWidth="875.0" layoutX="0" layoutY="0" preserveRatio="false" style="-fx-opacity: 0.9;" />
-      
-                      <!-- Weitere ImageViews nach Bedarf hinzufügen -->
-      
-                  </Pane>
+         <Group fx:id="zoomGroup">
+            <children>
+                  <Pane fx:id="boardPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+            </children>
+         </Group>
          <Pane>
             <children>
-               <ImageView fitHeight="800.0" fitWidth="325.0">
+               <ImageView fitWidth="325.0">
                   <image>
                      <Image url="@images/Sidepanel.png" />
                   </image>

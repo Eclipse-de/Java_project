@@ -2,8 +2,8 @@ package catan.game;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class App extends Application {
@@ -15,6 +15,7 @@ public class App extends Application {
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Siedler von Catan");
+        primaryStage.setFullScreen(true);
         primaryStage.show();
     }
 

@@ -1,15 +1,21 @@
 package catan.game;
 
-import javafx.fxml.FXML;
-import javafx.scene.layout.Pane;
-import javafx.event.ActionEvent;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.Group;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.Pane;
+import javafx.scene.transform.Scale;
+import javafx.scene.transform.Translate;
 
 public class GameBoardController {
 
@@ -30,6 +36,14 @@ public class GameBoardController {
 
     @FXML
     private Pane boardPane;
+    @FXML
+    private Group zoomGroup;
+
+    private Scale scale = new Scale(1, 1, 0, 0);
+    private Translate translate = new Translate();
+
+    private double mouseAnchorX, mouseAnchorY;
+    private double translateAnchorX, translateAnchorY;
 
     private static class HexTile {
         String resource;
@@ -98,6 +112,36 @@ public class GameBoardController {
         boardPane.getChildren().add(map_standard);
 
         map_standard.toFront();
+
+        // Zoom and Movement
+        zoomGroup.getTransforms().addAll(translate, scale);
+
+        //Zoom
+        boardPane.setOnScroll((ScrollEvent event) -> {
+            double zoomFactor = 1.05;
+            if (event.getDeltaY() < 0) {
+                zoomFactor = 1 / zoomFactor;
+            }
+
+            double newScale = scale.getX() * zoomFactor;
+            if (newScale < 0.2 || newScale > 5) return;
+
+            scale.setX(newScale);
+            scale.setY(newScale);
+        });
+
+        //Panning
+        boardPane.setOnMousePressed((MouseEvent event) -> {
+            mouseAnchorX = event.getSceneX();
+            mouseAnchorY = event.getSceneY();
+            translateAnchorX = translate.getX();
+            translateAnchorY = translate.getY();
+        });
+
+        boardPane.setOnMouseDragged((MouseEvent event) -> {
+            translate.setX(translateAnchorX + event.getSceneX() - mouseAnchorX);
+            translate.setY(translateAnchorY + event.getSceneY() - mouseAnchorY);
+        });
 
     }
 }
