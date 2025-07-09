@@ -20,7 +20,7 @@
       <children>
          <Group fx:id="zoomGroup">
             <children>
-                  <Pane fx:id="boardPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+                  <Pane fx:id="boardPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefHeight="800.0" prefWidth="875.0" />
             </children>
          </Group>
          <Pane>

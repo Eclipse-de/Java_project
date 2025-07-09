@@ -104,14 +104,43 @@ public class GameBoardController {
             boardPane.getChildren().add(img);
         }
 
-        ImageView map_standard = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/catan/game/images/map_standard.png"))));
+        ImageView map_background = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/catan/game/images/map_background_black.png"))));
+        map_background.setFitWidth(800);
+        map_background.setFitHeight(800);
+        map_background.setLayoutX(0);
+        map_background.setLayoutY(0);
+        boardPane.getChildren().add(map_background);
+
+        map_background.toBack();
+
+        ImageView map_standard = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/catan/game/images/map_standard2.png"))));
         map_standard.setFitWidth(800);
         map_standard.setFitHeight(800);
         map_standard.setLayoutX(0);
         map_standard.setLayoutY(0);
-        boardPane.getChildren().add(map_standard);
+        boardPane.getChildren().add(map_standard); 
 
-        map_standard.toFront();
+        map_standard.toFront(); 
+
+        ImageView map_water = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/catan/game/images/Water_Edge.png"))));
+        map_water.setFitWidth(900);
+        map_water.setFitHeight(1000);
+        map_water.setLayoutX(-50);
+        map_water.setLayoutY(-100);
+        boardPane.getChildren().add(map_water); 
+
+        map_water.toBack(); 
+
+        ImageView map_sand = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/catan/game/images/map_sand.png"))));
+        map_sand.setFitWidth(900);
+        map_sand.setFitHeight(900);
+        map_sand.setLayoutX(-50);
+        map_sand.setLayoutY(-50);
+        boardPane.getChildren().add(map_sand); 
+
+        map_sand.toBack(); 
+
+
 
         // Zoom and Movement
         zoomGroup.getTransforms().addAll(translate, scale);
