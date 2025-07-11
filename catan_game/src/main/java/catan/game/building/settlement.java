@@ -1,10 +1,10 @@
 package catan.game.building;
 
 import catan.game.gameboard.node;
-import catan.game.main.player;
+import catan.game.main.Player;
 
 public class settlement extends building {
-    public settlement(final player owner, final node location) {
+    public settlement(final Player owner, final node location) {
         super(owner, location);
     }
 

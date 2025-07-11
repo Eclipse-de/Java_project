@@ -1,35 +1,217 @@
 package catan.game;
 
-import javafx.fxml.FXML;
-import javafx.scene.layout.Pane;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import catan.game.gameboard.node;
+import catan.game.gameboard.tile;
+import catan.game.main.GameEngine;
+import catan.game.main.Player;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Objects;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 
 public class GameBoardController {
 
-    @FXML
-    private void handleRollDice(ActionEvent event) {
-        System.out.println("Würfeln gedrückt!");
+    private GameEngine gameEngine;
+    private List<String> resources;
+
+    private enum BuildMode { NONE, ROAD, VILLAGE, CITY }
+    private BuildMode currentBuildMode = BuildMode.NONE;
+
+    public void setGameEngine(GameEngine gameEngine) {
+        this.gameEngine = gameEngine;
+    }
+
+    public void setResources(List<String> resources) {
+        this.resources = resources;
     }
 
     @FXML
-    private void handleBuildRoad(ActionEvent event) {
-        System.out.println("Straße bauen gedrückt!");
+    private ListView<String> resourceList;
+
+    @FXML
+    private Pane boardPane;
+
+    @FXML
+    private Pane streetPane;
+
+    @FXML
+    private Pane buildingPane;
+
+    @FXML
+    private Label currentPlayerLabel;
+
+    @FXML
+    private void street(ActionEvent event) {
+        if (currentBuildMode == BuildMode.ROAD) {
+            currentBuildMode = BuildMode.NONE;
+        } else {
+            currentBuildMode = BuildMode.ROAD;
+        }
+        highlightBuildMode(currentBuildMode);
     }
+
+    @FXML
+    private void handeln(ActionEvent event) {
+        System.out.println("Handeln gedrückt!");
+        currentBuildMode = BuildMode.NONE;
+        highlightBuildMode(currentBuildMode);
+    }
+
+    @FXML
+    private void dorf(ActionEvent event) {
+        if (currentBuildMode == BuildMode.VILLAGE) {
+            currentBuildMode = BuildMode.NONE;
+        } else {
+            currentBuildMode = BuildMode.VILLAGE;
+        }
+        highlightBuildMode(currentBuildMode);
+    }
+    @FXML
+    private void stadt(ActionEvent event) {
+        if (currentBuildMode == BuildMode.CITY) {
+            currentBuildMode = BuildMode.NONE;
+        } else {
+            currentBuildMode = BuildMode.CITY;
+        }
+        highlightBuildMode(currentBuildMode);
+    }
+
+    private void highlightBuildMode(BuildMode mode) {
+        // Beide unsichtbar machen
+        streetPane.setVisible(false);
+        buildingPane.setVisible(false);
+
+        switch (mode) {
+            case ROAD -> streetPane.setVisible(true);
+            case VILLAGE, CITY -> buildingPane.setVisible(true);
+            default -> {
+                // NONE or any other case: both panes remain invisible
+            }
+        }
+    }
+
+    @FXML
+    private void handleBuildBuilding(ActionEvent event) {
+        Button clickedButton = (Button) event.getSource();
+        String id = clickedButton.getId(); // z. B. "buildingNode17"
+
+        if (id != null && id.startsWith("buildingNode")) {
+            int nodeIndex = Integer.parseInt(id.replace("buildingNode", ""));
+            System.out.println("Versuche Gebäude auf Node " + nodeIndex + " zu bauen");
+
+            // Versuche Dorf zu bauen
+            boolean gebaut = gameEngine.tryBuildVillage(nodeIndex, gameEngine.getCurrentPlayer());
+            updateResourceDisplay(gameEngine.getCurrentPlayer());
+
+            if (gebaut) {
+                double x = clickedButton.getLayoutX();
+                double y = clickedButton.getLayoutY();
+
+                placeBuildingImage(x, y, "VILLAGE");
+                clickedButton.setVisible(false);
+            }
+        }
+    }
+
+
+    private void placeBuildingImage(double x, double y, String type) {
+        String imagePath;
+
+        switch (type) {
+            case "VILLAGE" -> imagePath = "/catan/game/images/Dorf.png";
+            case "CITY"    -> imagePath = "/catan/game/images/Stadt.png";
+            default      -> throw new IllegalArgumentException("Unbekannter BuildingType: " + type);
+        }
+
+        ImageView buildingImage = new ImageView(new Image(
+                Objects.requireNonNull(getClass().getResourceAsStream(imagePath))
+        ));
+        
+        buildingImage.setFitWidth(30);   // Passe die Größe ggf. an
+        buildingImage.setFitHeight(30);
+        buildingImage.setLayoutX(x);
+        buildingImage.setLayoutY(y);
+
+        boardPane.getChildren().add(buildingImage);
+    }
+
+
+    @FXML
+    private void handleBuildRoad(ActionEvent event) {
+        Button clickedButton = (Button) event.getSource();
+        String id = clickedButton.getId(); // z. B. "roadEdge5"
+
+        if (id != null && id.startsWith("roadEdge")) {
+            int edgeIndex = Integer.parseInt(id.replace("roadEdge", ""));
+            System.out.println("Versuche Straße auf Edge " + edgeIndex + " zu bauen");
+
+            boolean gebaut = gameEngine.tryBuildRoad(edgeIndex, gameEngine.getCurrentPlayer());
+            updateResourceDisplay(gameEngine.getCurrentPlayer());
+
+            if (gebaut) {
+                double x = clickedButton.getLayoutX();
+                double y = clickedButton.getLayoutY();
+
+                // Bestimme Richtung (später besser per Datenstruktur)
+                placeRoadImage(x, y, "horizontal");  // ← z. B. statisch für jetzt
+                clickedButton.setVisible(false);
+
+            }
+        }
+    }
+
+
+    private void placeRoadImage(double x, double y, String direction) {
+        String imagePath;
+
+        switch (direction) {
+            case "horizontal" -> imagePath = "/catan/game/images/Straße.png";
+            case "upLeft"     -> imagePath = "/catan/game/images/road_up_left.png";
+            case "upRight"    -> imagePath = "/catan/game/images/road_up_right.png";
+            default           -> imagePath = "/catan/game/images/road_horizontal.png";
+        }
+
+        ImageView roadImage = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))));
+        roadImage.setFitWidth(60);  // Passe an deine Grafik an
+        roadImage.setFitHeight(20);
+        roadImage.setLayoutX(x);
+        roadImage.setLayoutY(y);
+
+        boardPane.getChildren().add(roadImage);
+    }
+
+
+
 
     @FXML
     private void handleEndTurn(ActionEvent event) {
         System.out.println("Zug beenden gedrückt!");
+        gameEngine.nextTurn();
+
+        updateResourceDisplay(gameEngine.getCurrentPlayer());
+        Player currentPlayer = gameEngine.getCurrentPlayer();
+        currentPlayerLabel.setText(currentPlayer.getName());
+        currentBuildMode = BuildMode.NONE;
+        highlightBuildMode(currentBuildMode);
     }
 
-    @FXML
-    private Pane boardPane;
+    private void updateResourceDisplay(Player player) {
+        resourceList.getItems().clear();
+        for (Map.Entry<String, Integer> entry : player.getResources().entrySet()) {
+            String line = entry.getKey() + ": " + entry.getValue();
+            resourceList.getItems().add(line);
+        }
+    }
 
     private static class HexTile {
         String resource;
@@ -43,25 +225,22 @@ public class GameBoardController {
         }
     }
 
-    public void initialize() {
+    public void initTiles() {
+        if (resources == null) {
+            System.err.println("⚠ Ressourcenliste wurde nicht gesetzt!");
+            return;
+        }
+
         double hexWidth = 160;
         double hexHeight = 185;
         double xOffset = hexWidth - 2;
         double yOffset = hexHeight - 40;
 
         int[] rowLengths = {3, 4, 5, 4, 3};
-        List<String> resources = new ArrayList<>(Arrays.asList(
-                "Holz", "Lehm", "Weizen", "Wolle", "Erz",
-                "Holz", "Lehm", "Wüste", "Wolle", "Weizen",
-                "Erz", "Wolle", "Holz", "Lehm", "Weizen",
-                "Erz", "Wolle", "Weizen", "Holz"
-        ));
-
-        Collections.shuffle(resources);
-
         List<HexTile> tiles = new ArrayList<>();
         double startY = 18;
         int resIndex = 0;
+
         for (int row = 0; row < rowLengths.length; row++) {
             int count = rowLengths[row];
             double startX = 400 - (count * xOffset) / 2;
@@ -87,6 +266,9 @@ public class GameBoardController {
             img.setFitHeight(hexHeight);
             img.setLayoutX(tile.x);
             img.setLayoutY(tile.y);
+
+            img.setOnMouseClicked(e -> handleTileClick(tile, e));
+
             boardPane.getChildren().add(img);
         }
 
@@ -96,8 +278,38 @@ public class GameBoardController {
         map_standard.setLayoutX(0);
         map_standard.setLayoutY(0);
         boardPane.getChildren().add(map_standard);
-
         map_standard.toFront();
+    }
 
+    public node findClosestNode(double x, double y) {
+        double minDist = Double.MAX_VALUE;
+        node closest = null;
+
+        for (tile t : gameEngine.getBoard().getTiles()) {
+            for (node n : t.getNodes()) {
+                if (n == null) continue;
+                double dist = Math.hypot(n.getX() - x, n.getY() - y);
+                if (dist < 20 && dist < minDist) {
+                    closest = n;
+                    minDist = dist;
+                }
+            }
+        }
+
+        return closest;
+    }
+
+
+    private void handleTileClick(HexTile tile, MouseEvent event) {
+        double clickX = event.getX();
+        double clickY = event.getY();
+        System.out.println("Hexfeld angeklickt: Ressource = " + tile.resource + ", BuildMode = " + currentBuildMode);
+
+        switch (currentBuildMode) {
+            case VILLAGE -> System.out.println("Dorf");//gameEngine.tryBuildVillage(clickX, clickY);
+            case CITY -> System.out.println("Stadt");//gameEngine.tryBuildCity(clickX, clickY);
+            case ROAD -> System.out.println("Strasse");//gameEngine.tryBuildRoad(clickX, clickY);
+            default -> System.out.println("Kein Baumodus aktiv");
+        }
     }
 }

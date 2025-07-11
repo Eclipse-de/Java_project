@@ -1,19 +1,21 @@
 package catan.game.gameboard;
+import catan.game.main.Player;
 
 public class node {
-    private final int x;
-    private final int y;
+    private double x, y; // für Klickerkennung (GUI)
+    private int index;
+    private Player owner;
 
-    public node(final int x, final int y) {
+    public node(int i) {
+        this.index = i;
         this.x = x;
         this.y = y;
     }
 
-    public int getX() {
-        return x;
-    }
+    public double getX() { return x; }
+    public double getY() { return y; }
 
-    public int getY() {
-        return y;
-    }
+    public Player getOwner() { return owner; }
+    public void setOwner(Player p) { this.owner = p; }
+    
 }

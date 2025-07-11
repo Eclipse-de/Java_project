@@ -1,19 +1,24 @@
 package catan.game.gameboard;
 
+import  catan.game.main.Player ;
+
 public class edge {
-    private final node nodeA;
-    private final node nodeB;
+    private node nodeA;
+    private node nodeB;
+    private Player owner;
 
-    public edge(final node nodeA, final node nodeB) {
-        this.nodeA = nodeA;
-        this.nodeB = nodeB;
+    public edge(node a, node b) {
+        this.nodeA = a;
+        this.nodeB = b;
     }
 
-    public node getNodeA() {
-        return nodeA;
+    public boolean isConnectedTo(node n) {
+        return nodeA == n || nodeB == n;
     }
 
-    public node getNodeB() {
-        return nodeB;
-    }
+    public Player getOwner() { return owner; }
+    public void setOwner(Player p) { this.owner = p; }
+
+    public node getNodeA() { return nodeA; }
+    public node getNodeB() { return nodeB; }
 }
