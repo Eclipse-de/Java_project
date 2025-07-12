@@ -17,10 +17,10 @@ public class GameEngine {
 
     public GameEngine() {
         this.players = new ArrayList<>();
-        players.add(new Player("Spieler 1"));
-        players.add(new Player("Spieler 2"));
-        players.add(new Player("Spieler 3"));
-        players.add(new Player("Spieler 4"));
+        players.add(new Player("Rot"));
+        players.add(new Player("Blau"));
+        players.add(new Player("Gruen"));
+        players.add(new Player("Gelb"));
     }
 
     public void setResources(List<String> resources) {
@@ -119,43 +119,48 @@ public class GameEngine {
         }
     }
 
+    private int turn = 0;
+
     public void nextTurn() {
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-        Player spieler = getCurrentPlayer();
 
-        int diceRoll = rollDice();
-        System.out.println("Gewürfelt: " + diceRoll);
+        if (turn < 7){
+            currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+            turn += 1;
+        }
+        else {
+            startPhase = false;
+            currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+            Player spieler = getCurrentPlayer();
 
-        distributeResources(diceRoll);
-        spieler.addResource("wood", 1);
-        spieler.addResource("brick", 1);
-        spieler.addResource("sheep", 1);
-        spieler.addResource("wheat", 1);
-        spieler.addResource("ore", 1);
-    }
+            int diceRoll = rollDice();
+            System.out.println("Gewürfelt: " + diceRoll);
 
-    public boolean tryBuildRoad(int edgeIndex, Player player) {
-        Map<String, Integer> resourcen = player.getResources();
-
-        // Prüfen, ob genug Ressourcen vorhanden sind
-        if (resourcen.getOrDefault("brick", 0) >= 1 && resourcen.getOrDefault("wood", 0) >= 1) {
-            System.out.println("genug");
-
-            // Ressourcen abziehen
-            resourcen.put("brick", resourcen.get("brick") - 1);
-            resourcen.put("wood", resourcen.get("wood") - 1);
-
-            return true;
-        } else {
-            System.out.println("nicht Genug");
-            return false;
+            distributeResources(diceRoll);
         }
     }
 
+    public boolean tryBuildRoad(int edgeIndex, Player player) {
 
-    public void buildStreet(node from, node to) {
-        // TODO: Implementieren, z.B. Edge zwischen zwei Nodes prüfen
-        System.out.println("Straße gebaut von " + from + " nach " + to);
+        if (startPhase) {
+            return true;
+        }
+        else {
+            Map<String, Integer> resourcen = player.getResources();
+
+            // Prüfen, ob genug Ressourcen vorhanden sind
+            if (resourcen.getOrDefault("brick", 0) >= 1 && resourcen.getOrDefault("wood", 0) >= 1) {
+                System.out.println("genug");
+
+                // Ressourcen abziehen
+                resourcen.put("brick", resourcen.get("brick") - 1);
+                resourcen.put("wood", resourcen.get("wood") - 1);
+
+                return true;
+            } else {
+                System.out.println("nicht Genug");
+                return false;
+            }
+        }
     }
 
     private List<node> nodes = new ArrayList<>();
@@ -167,24 +172,38 @@ public class GameEngine {
     }
 
     public boolean  tryBuildVillage(int nodeIndex, Player player) {
-        Player spieler = player;
-        node n = board.getNodes().get(nodeIndex);
 
-        Map<String,Integer> resourcen =spieler.getResources();
-        if (n.getOwner() == null) {
-            if (resourcen.getOrDefault("brick", 0) >= 1 && resourcen.getOrDefault("wood", 0) >= 1&& resourcen.getOrDefault("sheep", 0) >= 1&& resourcen.getOrDefault("wheat", 0) >= 1) {
-                System.out.println("genug");
+        if (startPhase) {
+
+            node n = board.getNodes().get(nodeIndex);
+
+            if (n.getOwner() == null) {
                 n.setOwner(player);
                 buildSettlement(n);
                 return true;
             }
-            else{
-                System.out.println("nicht Genug");
+            return true;
+        }
+        else {
+            Player spieler = player;
+            node n = board.getNodes().get(nodeIndex);
+
+            Map<String,Integer> resourcen =spieler.getResources();
+            if (n.getOwner() == null) {
+                if (resourcen.getOrDefault("brick", 0) >= 1 && resourcen.getOrDefault("wood", 0) >= 1&& resourcen.getOrDefault("sheep", 0) >= 1&& resourcen.getOrDefault("wheat", 0) >= 1) {
+                    System.out.println("genug");
+                    n.setOwner(player);
+                    buildSettlement(n);
+                    return true;
+                }
+                else{
+                    System.out.println("nicht Genug");
+                    return false;
+                }
+            } else {
+                System.out.println("Hier steht schon ein Dorf!");
                 return false;
             }
-        } else {
-            System.out.println("Hier steht schon ein Dorf!");
-            return false;
         }
     }
 
@@ -211,18 +230,30 @@ public class GameEngine {
     public void buildCity(node location, Player player) {
         player.buildCity(); // z.B. Anzahl Städte +1 setzen
         location.setCity(true); // falls du so ein Flag hast
+        checkVictory(player);
         System.out.println(player.getName() + " hat eine Stadt gebaut bei " + location);
     }
 
 
     public void buildSettlement(node location) {
         Player current = getCurrentPlayer();
-        if (current.canBuildSettlement()) {
+        if (startPhase){
             location.setOwner(current);
+            current.addResource("wood", 1);
+            current.addResource("brick", 1);
+            current.addResource("sheep", 1);
+            current.addResource("wheat", 1);
             current.buildVillage();
-            System.out.println(current.getName() + " hat ein Dorf gebaut bei " + location);
-        } else {
-            System.out.println(current.getName() + " hat nicht genug Ressourcen für ein Dorf.");
+        }
+        else {
+            if (current.canBuildSettlement()) {
+                location.setOwner(current);
+                current.buildVillage();
+                checkVictory(current);
+                System.out.println(current.getName() + " hat ein Dorf gebaut bei " + location);
+            } else {
+                System.out.println(current.getName() + " hat nicht genug Ressourcen für ein Dorf.");
+            }
         }
     }
 
@@ -240,4 +271,23 @@ public class GameEngine {
     //         System.out.println("Ungültiger Stadtbauversuch bei " + location);
     //     }
     // }
+//-------------------------------------------------------------------------------------------------------------------------------
+
+    private boolean startPhase = true;
+
+    private boolean gameOver = false;
+
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public void checkVictory(Player player) {
+        if (player.getVictoryPoints() >= 10) {
+            System.out.println("🏆 " + player.getName() + " hat das Spiel gewonnen!");
+            gameOver = true;
+            // Optional: GUI benachrichtigen
+        }
+    }
+
+
 }

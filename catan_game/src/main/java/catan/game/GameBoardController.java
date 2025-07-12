@@ -10,6 +10,7 @@ import catan.game.gameboard.node;
 import catan.game.gameboard.tile;
 import catan.game.main.GameEngine;
 import catan.game.main.Player;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
@@ -50,7 +51,13 @@ public class GameBoardController {
     private Pane buildingPane;
 
     @FXML
+    private Pane gameWin;
+
+    @FXML
     private Label currentPlayerLabel;
+
+    @FXML
+    private Label playerName;
 
     @FXML
     private void street(ActionEvent event) {
@@ -106,6 +113,7 @@ public class GameBoardController {
     private void handleBuildBuilding(ActionEvent event) {
         Button clickedButton = (Button) event.getSource();
         String id = clickedButton.getId(); // z. B. "buildingNode17"
+        String playerName = gameEngine.getCurrentPlayer().getName();
 
         if (id != null && id.startsWith("buildingNode")) {
             int nodeIndex = Integer.parseInt(id.replace("buildingNode", ""));
@@ -119,7 +127,7 @@ public class GameBoardController {
                     double x = clickedButton.getLayoutX();
                     double y = clickedButton.getLayoutY();
 
-                    placeBuildingImage(x, y, "VILLAGE");
+                    placeBuildingImage(x, y, "VILLAGE", playerName);
                     //clickedButton.setVisible(false);
                 }
             }
@@ -131,24 +139,49 @@ public class GameBoardController {
                         double x = clickedButton.getLayoutX();
                         double y = clickedButton.getLayoutY();
 
-                        placeBuildingImage(x, y, "CITY");
+                        placeBuildingImage(x, y, "CITY", playerName);
                         clickedButton.setVisible(false);
                     }
                 }
 
             }
         }
+        if (gameEngine.getCurrentPlayer().getVictoryPoints() >= 10){
+            showVictoryScreen(gameEngine.getCurrentPlayer().getName());
+        }
     }
     private final Map<Point2D, ImageView> imagesByPosition = new HashMap<>();
 
-private void placeBuildingImage(double x, double y, String type) {
+private String imagePath(String name, String type) {
     String imagePath;
 
     switch (type) {
-        case "VILLAGE" -> imagePath = "/catan/game/images/Dorf.png";
-        case "CITY"    -> imagePath = "/catan/game/images/Stadt.png";
+        case "VILLAGE" -> {
+            switch (name) {
+                case "Rot" -> imagePath = "/catan/game/images/Dorf.png";
+                case "Blau"    -> imagePath = "/catan/game/images/BlueSettlement.png";
+                case "Gruen"    -> imagePath = "/catan/game/images/GreenSettlement.png";
+                case "Gelb"    -> imagePath = "/catan/game/images/YellowSettlement.png";
+                default        -> throw new IllegalArgumentException("Unbekannter BuildingType: " + type);
+            }
+        }
+        case "CITY"    -> {
+            switch (name) {
+                case "Rot" -> imagePath = "/catan/game/images/Stadt.png";
+                case "Blau"    -> imagePath = "/catan/game/images/BlueCity.png";
+                case "Gruen"    -> imagePath = "/catan/game/images/GreenCity.png";
+                case "Gelb"    -> imagePath = "/catan/game/images/YellowCity.png";
+                default        -> throw new IllegalArgumentException("Unbekannter BuildingType: " + type);
+            }
+        }
         default        -> throw new IllegalArgumentException("Unbekannter BuildingType: " + type);
     }
+
+    return imagePath;
+}
+
+private void placeBuildingImage(double x, double y, String type, String name) {
+    String imagePath = imagePath(name, type);
 
     Point2D pos = new Point2D(x, y);
     ImageView existing = imagesByPosition.get(pos);
@@ -195,39 +228,104 @@ private void placeBuildingImage(double x, double y, String type) {
                 double x = clickedButton.getLayoutX();
                 double y = clickedButton.getLayoutY();
 
-                // Bestimme Richtung (später besser per Datenstruktur)
-                placeRoadImage(x, y, "horizontal");  // ← z. B. statisch für jetzt
+                double rotation = clickedButton.getRotate();
+
+                if (Math.abs(rotation) < 5.0) {
+                            placeRoadImage(x, y, "horizontal");
+                        } else if (rotation > 0) {
+                            placeRoadImage(x, y, "upLeft");
+                        } else {
+                            placeRoadImage(x, y, "upRight");
+                        }
+
                 clickedButton.setVisible(false);
 
             }
         }
     }
 
-
-    private void placeRoadImage(double x, double y, String direction) {
+    private String roadImagePath(String name, String direction) {
         String imagePath;
-
         switch (direction) {
-            case "horizontal" -> imagePath = "/catan/game/images/Straße.png";
-            case "upLeft"     -> imagePath = "/catan/game/images/road_up_left.png";
-            case "upRight"    -> imagePath = "/catan/game/images/road_up_right.png";
+            case "horizontal" -> {
+                switch (name) {
+                    case "Rot" -> imagePath = "/catan/game/images/Strasse_rot.png";
+                    case "Blau"     -> imagePath = "/catan/game/images/Strasse_blau.png";
+                    case "Gruen"    -> imagePath = "/catan/game/images/Strasse_gruen.png";
+                    case "Gelb"    -> imagePath = "/catan/game/images/Strasse_gelb.png";
+                    default           -> imagePath = "/catan/game/images/Strasse_rot.png";
+                }
+            }
+            case "upLeft"     -> {
+                switch (name) {
+                    case "Rot" -> imagePath = "/catan/game/images/Strasse_rot_links.png";
+                    case "Blau"     -> imagePath = "/catan/game/images/Strasse_blau_links.png";
+                    case "Gruen"    -> imagePath = "/catan/game/images/Strasse_gruen_links.png";
+                    case "Gelb"    -> imagePath = "/catan/game/images/Strasse_gelb_links.png";
+                    default           -> imagePath = "/catan/game/images/Strasse_rot_links.png";
+                }
+            }
+            case "upRight"    -> {
+                switch (name) {
+                    case "Rot" -> imagePath = "/catan/game/images/Strasse_rot_rechts.png";
+                    case "Blau"     -> imagePath = "/catan/game/images/Strasse_blau_rechts.png";
+                    case "Gruen"    -> imagePath = "/catan/game/images/Strasse_gruen_rechts.png";
+                    case "Gelb"    -> imagePath = "/catan/game/images/Strasse_gelb_rechts.png";
+                    default           -> imagePath = "/catan/game/images/Strasse_rot_rechts.png";
+                }
+            }
             default           -> imagePath = "/catan/game/images/road_horizontal.png";
         }
 
-        ImageView roadImage = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))));
-        roadImage.setFitWidth(60);  // Passe an deine Grafik an
-        roadImage.setFitHeight(20);
-        roadImage.setLayoutX(x);
-        roadImage.setLayoutY(y);
+        
 
-        boardPane.getChildren().add(roadImage);
+        return imagePath;
     }
 
 
+    private void placeRoadImage(double x, double y, String direction) {
+
+        String name = gameEngine.getCurrentPlayer().getName();
+        String imagePath = roadImagePath(name, direction);
+
+        ImageView roadImage = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))));
+
+        switch (direction) {
+            case "horizontal" -> {
+                roadImage.setFitWidth(40);  // Passe an deine Grafik an
+                roadImage.setFitHeight(100);
+                roadImage.setLayoutX(x + 10);
+                roadImage.setLayoutY(y - 35);
+
+                boardPane.getChildren().add(roadImage);
+            }
+            case "upLeft" -> {
+                roadImage.setFitWidth(60);  // Passe an deine Grafik an
+                roadImage.setFitHeight(35);
+                roadImage.setLayoutX(x);
+                roadImage.setLayoutY(y);
+
+                boardPane.getChildren().add(roadImage);
+            }
+            case "upRight" -> {
+                roadImage.setFitWidth(60);  // Passe an deine Grafik an
+                roadImage.setFitHeight(35);
+                roadImage.setLayoutX(x - 10);
+                roadImage.setLayoutY(y - 12);
+
+                boardPane.getChildren().add(roadImage);
+            }
+            default ->
+                throw new AssertionError();
+        }
+    }
+
+    private int turn = 0;
 
 
     @FXML
     private void handleEndTurn(ActionEvent event) {
+        
         System.out.println("Zug beenden gedrückt!");
         gameEngine.nextTurn();
 
@@ -345,4 +443,16 @@ private void placeBuildingImage(double x, double y, String type) {
             default -> System.out.println("Kein Baumodus aktiv");
         }
     }
+
+    public void showVictoryScreen(String winnerName) {
+        gameWin.setVisible(true);
+        playerName.setText(winnerName);
+        System.out.println("🏆 " + winnerName + " hat gewonnen!");
+    }
+
+    @FXML
+    private void handleExitGame() {
+        Platform.exit(); // Beendet die JavaFX-App
+    }
+
 }

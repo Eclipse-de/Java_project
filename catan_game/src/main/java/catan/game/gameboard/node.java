@@ -24,6 +24,10 @@ public class node {
         return adjacentTiles;
     }
 
+    public int getId() {
+        return index;
+    }
+
     public node(int i) {
         this.index = i;
         this.x = x;

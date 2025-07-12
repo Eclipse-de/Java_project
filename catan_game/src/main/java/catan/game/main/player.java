@@ -41,15 +41,19 @@ public class Player {
         resources.put("sheep", resources.get("sheep") - 1);
         resources.put("wheat", resources.get("wheat") - 1);
 
-        victoryPoints += 1;
-    }
+        addVictoryPoints(1);    }
 
     public void buildCity() {
         resources.put("wheat", resources.get("wheat") - 1);
         resources.put("ore", resources.get("ore") - 1);
 
-        victoryPoints += 1;
+        addVictoryPoints(1);
     }
+
+    public void addVictoryPoints(int amount){
+        victoryPoints += amount;
+    }
+
 
     public int getVictoryPoints() {
         return victoryPoints;
