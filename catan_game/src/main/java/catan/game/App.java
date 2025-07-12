@@ -22,10 +22,10 @@ public class App extends Application {
 
         // Ressourcenliste vorbereiten
         List<String> resources = Arrays.asList(
-            "Holz", "Lehm", "Weizen", "Wolle", "Erz",
-            "Holz", "Lehm", "Wüste", "Wolle", "Weizen",
-            "Erz", "Wolle", "Holz", "Lehm", "Weizen",
-            "Erz", "Wolle", "Weizen", "Holz"
+            "wood", "brick", "wheat", "sheep", "ore",
+            "wood", "brick", "Wüste", "sheep", "wheat",
+            "ore", "sheep", "wood", "brick", "wheat",
+            "ore", "sheep", "wheat", "wood"
         );
         Collections.shuffle(resources);
 

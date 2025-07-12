@@ -27,6 +27,7 @@ public class GameEngine {
         this.resources = resources;
     }
 
+
     public void startGame() {
         if (resources == null) {
             System.err.println("⚠ Ressourcenliste fehlt in GameEngine!");
@@ -34,32 +35,58 @@ public class GameEngine {
         }
 
         this.board = new board();
-
-        List<tile> tiles = new ArrayList<>();
         board.setNodes(nodes);
 
-        // Zahlentokens für 19 Felder (ohne Wüste). Verteilung ist wie beim echten Catan.
+        List<tile> tiles = new ArrayList<>();
+
+        // Zahlentoken vorbereiten
         List<Integer> numberTokens = new ArrayList<>(List.of(
             5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11
         ));
-
         int tokenIndex = 0;
 
         for (String res : resources) {
             if (res.equals("Wüste")) {
-                tiles.add(new tile("Wüste", 0));  // Kein Zahlentoken
+                tiles.add(new tile("Wüste", 0));
             } else {
                 int token = numberTokens.get(tokenIndex++);
                 tiles.add(new tile(res, token));
             }
         }
-
         board.setTiles(tiles);
         board.setResources(resources);
 
-        System.out.println("Tiles im Board:");
-        for (tile t : tiles) {
-            System.out.println(t.getResourceType() + " mit Token " + t.getNumberToken());
+        // Jetzt Tile-zu-Node-Zuordnung
+            int[][] tileToNodeMapping = {
+                {0, 1, 2, 18, 17, 16},      // Tile 0
+                {2, 3, 4, 16, 14, 13},    // Tile 1
+                {4, 5, 6, 13, 12, 7},   // Tile 2
+                {19, 18, 17, 20, 21, 22},   // Tile 3
+                {17, 16, 14, 22, 23, 15}, // Tile 4
+                {14, 13, 12, 15, 24, 11},
+                {12, 7, 8, 11, 10, 9},
+                {53, 20, 21, 52, 50, 51},
+                {21, 22, 23, 51, 41, 40},
+                {23, 15, 24, 40, 39, 33},
+                {24, 11, 10, 33, 34, 35},
+                {10, 9, 25, 35, 27, 26},
+                {50, 51, 41, 49, 48, 43},
+                {41, 40, 39, 43, 42, 38},
+                {39, 33, 34, 38, 32, 36},
+                {34, 35, 27, 26, 38, 27},
+                {48, 42, 43, 47, 46, 44},
+                {42, 38, 32, 44, 45, 31},
+                {32, 26, 38, 31, 30, 29}  // Tile 18
+            };
+
+        for (int tileIndex = 0; tileIndex < tileToNodeMapping.length; tileIndex++) {
+            tile t = tiles.get(tileIndex);
+            int[] nodeIndices = tileToNodeMapping[tileIndex];
+
+            for (int nodeIndex : nodeIndices) {
+                node n = nodes.get(nodeIndex);
+                n.addTile(t);
+            }
         }
 
     }
@@ -78,18 +105,14 @@ public class GameEngine {
         return die1 + die2;
     }
 
-    public void distributeResources(int diceNumber) {
-        for (tile t : board.getTiles()) {
-            if (t.getNumberToken() == diceNumber) {
-                String res = t.getResourceType();
-
-                System.out.println(res);
-
-                for (node n : t.getNodes()) {
-                    Player owner = n.getOwner();
-                    if (owner != null) {
-                        owner.addResource(res, 1);
-                        System.out.println(owner.getName() + " bekommt 1x " + res);
+    public void distributeResources(int diceRoll) {
+        for (node n : board.getNodes()) {
+            if (n.getOwner() != null) {
+                for (tile t : n.getAdjacentTiles()) {
+                    if (t.getNumberToken() == diceRoll) {
+                        String res = t.getResourceType();
+                        int amount = n.isCity() ? 2 : 1;
+                        n.getOwner().addResource(res, amount);
                     }
                 }
             }
@@ -103,11 +126,12 @@ public class GameEngine {
         int diceRoll = rollDice();
         System.out.println("Gewürfelt: " + diceRoll);
 
-        //distributeResources(diceRoll);
+        distributeResources(diceRoll);
         spieler.addResource("wood", 1);
         spieler.addResource("brick", 1);
         spieler.addResource("sheep", 1);
         spieler.addResource("wheat", 1);
+        spieler.addResource("ore", 1);
     }
 
     public boolean tryBuildRoad(int edgeIndex, Player player) {
@@ -137,7 +161,7 @@ public class GameEngine {
     private List<node> nodes = new ArrayList<>();
 
     public void initGameBoard() {
-        for (int i = 0; i < 53; i++) {
+        for (int i = 0; i < 54; i++) {
             nodes.add(new node(i)); // oder dein eigener Knoten-Typ
         }
     }
@@ -162,6 +186,32 @@ public class GameEngine {
             System.out.println("Hier steht schon ein Dorf!");
             return false;
         }
+    }
+
+    public boolean tryBuildCity(int nodeIndex, Player player) {
+        node n = board.getNodes().get(nodeIndex);
+
+        if (n.getOwner() != null && n.getOwner().equals(player)) {
+            Map<String, Integer> resourcen = player.getResources();
+
+            if (resourcen.getOrDefault("wheat", 0) >= 2 && resourcen.getOrDefault("ore", 0) >= 3) {
+
+                buildCity(n, player);
+                return true;
+            } else {
+                System.out.println("Nicht genug Ressourcen für eine Stadt!");
+                return false;
+            }
+        } else {
+            System.out.println("Du kannst hier keine Stadt bauen (kein eigenes Dorf)!");
+            return false;
+        }
+    }
+
+    public void buildCity(node location, Player player) {
+        player.buildCity(); // z.B. Anzahl Städte +1 setzen
+        location.setCity(true); // falls du so ein Flag hast
+        System.out.println(player.getName() + " hat eine Stadt gebaut bei " + location);
     }
 
 

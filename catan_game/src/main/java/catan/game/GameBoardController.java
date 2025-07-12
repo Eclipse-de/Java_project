@@ -1,6 +1,7 @@
 package catan.game;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -11,6 +12,7 @@ import catan.game.main.GameEngine;
 import catan.game.main.Player;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -110,40 +112,71 @@ public class GameBoardController {
             System.out.println("Versuche Gebäude auf Node " + nodeIndex + " zu bauen");
 
             // Versuche Dorf zu bauen
-            boolean gebaut = gameEngine.tryBuildVillage(nodeIndex, gameEngine.getCurrentPlayer());
-            updateResourceDisplay(gameEngine.getCurrentPlayer());
+            if (currentBuildMode == BuildMode.VILLAGE){
+                boolean gebaut = gameEngine.tryBuildVillage(nodeIndex, gameEngine.getCurrentPlayer());
+                updateResourceDisplay(gameEngine.getCurrentPlayer());
+                if (gebaut) {
+                    double x = clickedButton.getLayoutX();
+                    double y = clickedButton.getLayoutY();
 
-            if (gebaut) {
-                double x = clickedButton.getLayoutX();
-                double y = clickedButton.getLayoutY();
+                    placeBuildingImage(x, y, "VILLAGE");
+                    //clickedButton.setVisible(false);
+                }
+            }
+            
+            else{
+                if (currentBuildMode == BuildMode.CITY){
+                    boolean success = gameEngine.tryBuildCity(nodeIndex, gameEngine.getCurrentPlayer());
+                    if (success) {
+                        double x = clickedButton.getLayoutX();
+                        double y = clickedButton.getLayoutY();
 
-                placeBuildingImage(x, y, "VILLAGE");
-                clickedButton.setVisible(false);
+                        placeBuildingImage(x, y, "CITY");
+                        clickedButton.setVisible(false);
+                    }
+                }
+
             }
         }
     }
+    private final Map<Point2D, ImageView> imagesByPosition = new HashMap<>();
 
+private void placeBuildingImage(double x, double y, String type) {
+    String imagePath;
 
-    private void placeBuildingImage(double x, double y, String type) {
-        String imagePath;
-
-        switch (type) {
-            case "VILLAGE" -> imagePath = "/catan/game/images/Dorf.png";
-            case "CITY"    -> imagePath = "/catan/game/images/Stadt.png";
-            default      -> throw new IllegalArgumentException("Unbekannter BuildingType: " + type);
-        }
-
-        ImageView buildingImage = new ImageView(new Image(
-                Objects.requireNonNull(getClass().getResourceAsStream(imagePath))
-        ));
-        
-        buildingImage.setFitWidth(30);   // Passe die Größe ggf. an
-        buildingImage.setFitHeight(30);
-        buildingImage.setLayoutX(x);
-        buildingImage.setLayoutY(y);
-
-        boardPane.getChildren().add(buildingImage);
+    switch (type) {
+        case "VILLAGE" -> imagePath = "/catan/game/images/Dorf.png";
+        case "CITY"    -> imagePath = "/catan/game/images/Stadt.png";
+        default        -> throw new IllegalArgumentException("Unbekannter BuildingType: " + type);
     }
+
+    Point2D pos = new Point2D(x, y);
+    ImageView existing = imagesByPosition.get(pos);
+
+    // Wenn ein Dorf existiert und wir eine Stadt bauen wollen, ersetze das Bild
+    if (existing != null) {
+        if ("CITY".equals(type)) {
+            boardPane.getChildren().remove(existing); // altes Dorf entfernen
+        } else {
+            // Ein Dorf existiert schon – nichts tun
+            return;
+        }
+    }
+
+    // Neues Gebäude platzieren
+    ImageView buildingImage = new ImageView(new Image(
+            Objects.requireNonNull(getClass().getResourceAsStream(imagePath))
+    ));
+
+    buildingImage.setFitWidth(30);
+    buildingImage.setFitHeight(30);
+    buildingImage.setLayoutX(x);
+    buildingImage.setLayoutY(y);
+
+    boardPane.getChildren().add(buildingImage);
+    imagesByPosition.put(pos, buildingImage);
+}
+
 
 
     @FXML
@@ -253,11 +286,11 @@ public class GameBoardController {
 
         for (HexTile tile : tiles) {
             String imagePath = switch (tile.resource) {
-                case "Holz" -> "/catan/game/images/hexagon_wood.png";
-                case "Lehm" -> "/catan/game/images/hexagon_clay.png";
-                case "Weizen" -> "/catan/game/images/hexagon_wheat.png";
-                case "Wolle" -> "/catan/game/images/hexagon_sheep.png";
-                case "Erz" -> "/catan/game/images/hexagon_ore.png";
+                case "wood" -> "/catan/game/images/hexagon_wood.png";
+                case "brick" -> "/catan/game/images/hexagon_clay.png";
+                case "wheat" -> "/catan/game/images/hexagon_wheat.png";
+                case "sheep" -> "/catan/game/images/hexagon_sheep.png";
+                case "ore" -> "/catan/game/images/hexagon_ore.png";
                 default -> "/catan/game/images/hexagon_desert.png";
             };
 
