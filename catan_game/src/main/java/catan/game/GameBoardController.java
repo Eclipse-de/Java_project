@@ -30,6 +30,10 @@ public class GameBoardController {
     private enum BuildMode { NONE, ROAD, VILLAGE, CITY, TRADE}
     private BuildMode currentBuildMode = BuildMode.NONE;
 
+    private enum TradeMode { NONE, P1, P2, P3, BANK}
+    private TradeMode currentTradeMode = TradeMode.NONE;
+
+
     public void setGameEngine(GameEngine gameEngine) {
         this.gameEngine = gameEngine;
     }
@@ -80,6 +84,362 @@ public class GameBoardController {
             currentBuildMode = BuildMode.TRADE;
         }
         highlightBuildMode(currentBuildMode);
+        trade();
+    }
+
+    @FXML private Button btn_toolbar_rr;
+    @FXML private Label otherPlayer;
+    @FXML private Pane pane_trading_desicions;
+
+    @FXML
+    private void tradeWith(ActionEvent event) {
+        Object source = event.getSource();
+
+        if (source == btn_toolbar_ll) {
+            currentTradeMode = TradeMode.P1;
+            pane_trading_desicions.setVisible(true);
+            otherPlayer.setText(btn_toolbar_ll.getText());
+
+        } else if (source == btn_toolbar_ml) {
+            currentTradeMode = TradeMode.P2;
+            pane_trading_desicions.setVisible(true);
+            otherPlayer.setText(btn_toolbar_ml.getText());
+
+        } else if (source == btn_toolbar_mr) {
+            currentTradeMode = TradeMode.P3;
+            pane_trading_desicions.setVisible(true);
+            otherPlayer.setText(btn_toolbar_mr.getText());
+
+        } else if (source == btn_toolbar_rr) {
+            currentTradeMode = TradeMode.BANK;
+            pane_trading_desicions.setVisible(true);
+            otherPlayer.setText(btn_toolbar_rr.getText());
+
+        } else {
+            currentTradeMode = TradeMode.NONE;
+            System.out.println("Kein gültiger Button erkannt.");
+        }
+
+        // Optional: Update GUI (z. B. Handelspanel anzeigen)
+        // updateTradeUI();
+    }
+
+    @FXML private Label lb_trade_meplayer_ll;
+    @FXML private Label lb_trade_oplayer_ll;
+
+    @FXML private Label lb_trade_meplayer_ml;
+    @FXML private Label lb_trade_oplayer_ml;
+
+    @FXML private Label lb_trade_meplayer_mid;
+    @FXML private Label lb_trade_oplayer_mid;
+
+    @FXML private Label lb_trade_meplayer_mr;
+    @FXML private Label lb_trade_oplayer_mr;
+
+    @FXML private Label lb_trade_meplayer_rr;
+    @FXML private Label lb_trade_oplayer_rr;
+
+    private Map<String,Integer> bankResources(){
+        Map<String, Integer> map = new HashMap<>();
+        map.put("ore", 999);
+        map.put("brick", 999);
+        map.put("sheep", 999);
+        map.put("wood", 999);
+        map.put("wheat", 999);
+
+        return map;
+
+    }
+
+    @FXML
+    private void increaseResource(ActionEvent event) {
+
+        Map<String,Integer> player_resources = gameEngine.getCurrentPlayer().getResources();
+
+        Map<String,Integer> other_resources = null;
+        switch (currentTradeMode) {
+            case P1:
+                other_resources = gameEngine.getNextPlayer(1).getResources();
+                break;
+            case P2:
+                other_resources = gameEngine.getNextPlayer(2).getResources();
+                break;
+            case P3:
+                other_resources = gameEngine.getNextPlayer(3).getResources();
+                break;
+            case BANK:
+                other_resources = bankResources();
+                break;
+            default:
+                throw new AssertionError();
+        }
+
+        Button source = (Button) event.getSource();
+
+        if (source.getId().contains("meplayer_ll_up")) {
+            int currentValue = Integer.parseInt(lb_trade_meplayer_ll.getText());
+            int available = player_resources.getOrDefault("ore", 0);
+
+            if (currentValue < available) {
+                updateResourceLabel(lb_trade_meplayer_ll, 1);
+            }
+
+        } else if (source.getId().contains("meplayer_ll_down")) {
+            updateResourceLabel(lb_trade_meplayer_ll, -1);
+        }
+
+        else if (source.getId().contains("oplayer_ll_up")) {
+            int currentValue = Integer.parseInt(lb_trade_oplayer_ll.getText());
+            int available = other_resources.getOrDefault("ore", 0);
+
+            if (currentValue < available) {
+                updateResourceLabel(lb_trade_oplayer_ll, 1);
+            }
+        } else if (source.getId().contains("oplayer_ll_down")) {
+            updateResourceLabel(lb_trade_oplayer_ll, -1);
+        }
+
+
+        if (source.getId().contains("meplayer_ml_up")) {
+            int currentValue = Integer.parseInt(lb_trade_meplayer_ml.getText());
+            int available = player_resources.getOrDefault("brick", 0);
+
+            if (currentValue < available) {
+                updateResourceLabel(lb_trade_meplayer_ml, 1);
+            }
+
+        } else if (source.getId().contains("meplayer_ml_down")) {
+            updateResourceLabel(lb_trade_meplayer_ml, -1);
+        }
+
+        else if (source.getId().contains("oplayer_ml_up")) {
+            int currentValue = Integer.parseInt(lb_trade_oplayer_ml.getText());
+            int available = other_resources.getOrDefault("brick", 0);
+
+            if (currentValue < available) {
+                updateResourceLabel(lb_trade_oplayer_ml, 1);
+            }
+        } else if (source.getId().contains("oplayer_ml_down")) {
+            updateResourceLabel(lb_trade_oplayer_ml, -1);
+        }
+
+
+
+        if (source.getId().contains("meplayer_mid_up")) {
+            int currentValue = Integer.parseInt(lb_trade_meplayer_mid.getText());
+            int available = player_resources.getOrDefault("sheep", 0);
+
+            if (currentValue < available) {
+                updateResourceLabel(lb_trade_meplayer_mid, 1);
+            }
+
+        } else if (source.getId().contains("meplayer_mid_down")) {
+            updateResourceLabel(lb_trade_meplayer_mid, -1);
+        }
+
+        else if (source.getId().contains("oplayer_mid_up")) {
+            int currentValue = Integer.parseInt(lb_trade_oplayer_mid.getText());
+            int available = other_resources.getOrDefault("sheep", 0);
+
+            if (currentValue < available) {
+                updateResourceLabel(lb_trade_oplayer_mid, 1);
+            }
+        } else if (source.getId().contains("oplayer_mid_down")) {
+            updateResourceLabel(lb_trade_oplayer_mid, -1);
+        }
+
+
+
+        if (source.getId().contains("meplayer_mr_up")) {
+            int currentValue = Integer.parseInt(lb_trade_meplayer_mr.getText());
+            int available = player_resources.getOrDefault("wheat", 0);
+
+            if (currentValue < available) {
+                updateResourceLabel(lb_trade_meplayer_mr, 1);
+            }
+
+        } else if (source.getId().contains("meplayer_mr_down")) {
+            updateResourceLabel(lb_trade_meplayer_mr, -1);
+        }
+
+        else if (source.getId().contains("oplayer_mr_up")) {
+            int currentValue = Integer.parseInt(lb_trade_oplayer_mr.getText());
+            int available = other_resources.getOrDefault("wheat", 0);
+
+            if (currentValue < available) {
+                updateResourceLabel(lb_trade_oplayer_mr, 1);
+            }
+        } else if (source.getId().contains("oplayer_mr_down")) {
+            updateResourceLabel(lb_trade_oplayer_mr, -1);
+        }
+
+
+
+        if (source.getId().contains("meplayer_rr_up")) {
+            int currentValue = Integer.parseInt(lb_trade_meplayer_rr.getText());
+            int available = player_resources.getOrDefault("wood", 0);
+
+            if (currentValue < available) {
+                updateResourceLabel(lb_trade_meplayer_rr, 1);
+            }
+
+        } else if (source.getId().contains("meplayer_rr_down")) {
+            updateResourceLabel(lb_trade_meplayer_rr, -1);
+        }
+
+        else if (source.getId().contains("oplayer_rr_up")) {
+            int currentValue = Integer.parseInt(lb_trade_oplayer_rr.getText());
+            int available = other_resources.getOrDefault("ore", 0);
+
+            if (currentValue < available) {
+                updateResourceLabel(lb_trade_oplayer_rr, 1);
+            }
+        } else if (source.getId().contains("oplayer_rr_down")) {
+            updateResourceLabel(lb_trade_oplayer_rr, -1);
+        }
+    }
+
+
+    private void updateResourceLabel(Label label, int delta) {
+        int current = Integer.parseInt(label.getText());
+        int updated = Math.max(0, current + delta); // Keine negativen Werte
+        label.setText(String.valueOf(updated));
+    }
+
+    @FXML
+    private Pane pane_meplayer_resources;
+
+    @FXML
+    private Label lb_meplayer_resources1;
+
+    @FXML
+    private Label lb_meplayer_resources2;
+
+    @FXML
+    private Label lb_meplayer_resources3;
+
+    @FXML
+    private Label lb_meplayer_resources4;
+
+    @FXML
+    private Label lb_meplayer_resources5;
+
+    @FXML
+    private Label lb_pleft_resources1;
+    @FXML
+    private Label lb_pleft_resources2;
+    @FXML
+    private Label lb_pleft_resources3;
+    @FXML
+    private Label lb_pleft_resources4;
+    @FXML
+    private Label lb_pleft_resources5;
+
+    @FXML
+    private Label lb_pmid_resources1;
+    @FXML
+    private Label lb_pmid_resources2;
+    @FXML
+    private Label lb_pmid_resources3;
+    @FXML
+    private Label lb_pmid_resources4;
+    @FXML
+    private Label lb_pmid_resources5;
+
+    @FXML
+    private Label lb_pright_resources1;
+    @FXML
+    private Label lb_pright_resources2;
+    @FXML
+    private Label lb_pright_resources3;
+    @FXML
+    private Label lb_pright_resources4;
+    @FXML
+    private Label lb_pright_resources5;
+
+    @FXML
+    private Button btn_toolbar_ll;
+    @FXML
+    private Button btn_toolbar_ml;
+    @FXML
+    private Button btn_toolbar_mr;
+
+    private void trade(){
+        Player player = gameEngine.getCurrentPlayer();
+        resourceList.getItems().clear();
+        for (Map.Entry<String, Integer> entry : player.getResources().entrySet()) {
+
+            switch (entry.getKey()) {
+                case "ore" -> lb_meplayer_resources1.setText(entry.getValue().toString());
+                case "brick" -> lb_meplayer_resources2.setText(entry.getValue().toString());
+                case "sheep" -> lb_meplayer_resources3.setText(entry.getValue().toString());
+                case "wheat" -> lb_meplayer_resources4.setText(entry.getValue().toString());
+                case "wood" -> lb_meplayer_resources5.setText(entry.getValue().toString());
+
+                default ->
+                    throw new AssertionError();
+            }
+        }
+
+        for (int i = 1; i <= 3; i++){
+            Player other = gameEngine.getNextPlayer(i);
+            String name = other.getName();
+
+            resourceList.getItems().clear();
+            switch (i) {
+                case 1 -> {
+                    btn_toolbar_ll.setText(name);
+                    for (Map.Entry<String, Integer> entry : other.getResources().entrySet()) {
+
+                        switch (entry.getKey()) {
+                            case "ore" -> lb_pleft_resources1.setText(entry.getValue().toString());
+                            case "brick" -> lb_pleft_resources2.setText(entry.getValue().toString());
+                            case "sheep" -> lb_pleft_resources3.setText(entry.getValue().toString());
+                            case "wheat" -> lb_pleft_resources4.setText(entry.getValue().toString());
+                            case "wood" -> lb_pleft_resources5.setText(entry.getValue().toString());
+
+                            default ->
+                                throw new AssertionError();
+                        }
+                    }
+                }
+                case 2 -> {
+                    btn_toolbar_ml.setText(name);
+                    for (Map.Entry<String, Integer> entry : other.getResources().entrySet()) {
+
+                        switch (entry.getKey()) {
+                            case "ore" -> lb_pmid_resources1.setText(entry.getValue().toString());
+                            case "brick" -> lb_pmid_resources2.setText(entry.getValue().toString());
+                            case "sheep" -> lb_pmid_resources3.setText(entry.getValue().toString());
+                            case "wheat" -> lb_pmid_resources4.setText(entry.getValue().toString());
+                            case "wood" -> lb_pmid_resources5.setText(entry.getValue().toString());
+
+                            default ->
+                                throw new AssertionError();
+                        }
+                    }
+                }
+                case 3 -> {
+                    btn_toolbar_mr.setText(name);
+                    for (Map.Entry<String, Integer> entry : other.getResources().entrySet()) {
+
+                        switch (entry.getKey()) {
+                            case "ore" -> lb_pright_resources1.setText(entry.getValue().toString());
+                            case "brick" -> lb_pright_resources2.setText(entry.getValue().toString());
+                            case "sheep" -> lb_pright_resources3.setText(entry.getValue().toString());
+                            case "wheat" -> lb_pright_resources4.setText(entry.getValue().toString());
+                            case "wood" -> lb_pright_resources5.setText(entry.getValue().toString());
+
+                            default ->
+                                throw new AssertionError();
+                        }
+                    }
+                }
+
+                default ->
+                    throw new AssertionError();
+            }
+        }
     }
 
     @FXML
@@ -342,6 +702,7 @@ private void placeBuildingImage(double x, double y, String type, String name) {
         currentPlayerLabel.setText(currentPlayer.getName());
         currentBuildMode = BuildMode.NONE;
         highlightBuildMode(currentBuildMode);
+        pane_trading_desicions.setVisible(false);
     }
 
     private void updateResourceDisplay(Player player) {
@@ -461,6 +822,66 @@ private void placeBuildingImage(double x, double y, String type, String name) {
     @FXML
     private void handleExitGame() {
         Platform.exit(); // Beendet die JavaFX-App
+    }
+
+    @FXML
+    private void commitTrade() {
+        int oreFromMe = Integer.parseInt(lb_trade_meplayer_ll.getText());
+        int oreFromOther = Integer.parseInt(lb_trade_oplayer_ll.getText());
+        
+        int brickFromMe = Integer.parseInt(lb_trade_meplayer_ml.getText());
+        int brickFromOther = Integer.parseInt(lb_trade_oplayer_ml.getText());
+
+        int sheepFromMe = Integer.parseInt(lb_trade_meplayer_mid.getText());
+        int sheepFromOther = Integer.parseInt(lb_trade_oplayer_mid.getText());
+
+        int wheatFromMe = Integer.parseInt(lb_trade_meplayer_mr.getText());
+        int wheatFromOther = Integer.parseInt(lb_trade_oplayer_mr.getText());
+
+        int woodFromMe = Integer.parseInt(lb_trade_meplayer_rr.getText());
+        int woodFromOther = Integer.parseInt(lb_trade_oplayer_rr.getText());
+
+        if (null != currentTradeMode) // Beispielhafte Logik (abhängig von deinem Player-System):
+        switch (currentTradeMode) {
+            case P1 -> {
+                Player other = gameEngine.getNextPlayer(1);
+                tradeResources(gameEngine.getCurrentPlayer(), other, oreFromMe, oreFromOther, "ore");
+                tradeResources(gameEngine.getCurrentPlayer(), other, brickFromMe, brickFromOther, "brick");
+                tradeResources(gameEngine.getCurrentPlayer(), other, sheepFromMe, sheepFromOther, "sheep");
+                tradeResources(gameEngine.getCurrentPlayer(), other, wheatFromMe, wheatFromOther, "wheat");
+                tradeResources(gameEngine.getCurrentPlayer(), other, woodFromMe, woodFromOther, "wood");
+            }
+            case P2 -> {
+                Player other = gameEngine.getNextPlayer(2);
+                tradeResources(gameEngine.getCurrentPlayer(), other, oreFromMe, oreFromOther, "ore");
+                tradeResources(gameEngine.getCurrentPlayer(), other, brickFromMe, brickFromOther, "brick");
+                tradeResources(gameEngine.getCurrentPlayer(), other, sheepFromMe, sheepFromOther, "sheep");
+                tradeResources(gameEngine.getCurrentPlayer(), other, wheatFromMe, wheatFromOther, "wheat");
+                tradeResources(gameEngine.getCurrentPlayer(), other, woodFromMe, woodFromOther, "wood");
+            }
+            case P3 -> {
+                Player other = gameEngine.getNextPlayer(3);
+                tradeResources(gameEngine.getCurrentPlayer(), other, oreFromMe, oreFromOther, "ore");
+                tradeResources(gameEngine.getCurrentPlayer(), other, brickFromMe, brickFromOther, "brick");
+                tradeResources(gameEngine.getCurrentPlayer(), other, sheepFromMe, sheepFromOther, "sheep");
+                tradeResources(gameEngine.getCurrentPlayer(), other, wheatFromMe, wheatFromOther, "wheat");
+                tradeResources(gameEngine.getCurrentPlayer(), other, woodFromMe, woodFromOther, "wood");
+            }
+            default -> {
+                // Do nothing
+            }
+        }
+    }
+
+    private void tradeResources(Player me, Player other, int oreFromMe, int oreFromOther ,String resource) {
+        // Beispiel: Erz vom Spieler an anderen
+        for (int i = 0; i < oreFromMe; i++) me.removeResource(resource, 1);
+        for (int i = 0; i < oreFromOther; i++) other.removeResource(resource, 1);
+
+        for (int i = 0; i < oreFromMe; i++) other.addResource(resource, 1);
+        for (int i = 0; i < oreFromOther; i++) me.addResource(resource, 1);
+
+        // analog für alle weiteren Ressourcen
     }
 
 }
