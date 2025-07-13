@@ -289,7 +289,7 @@ public class GameBoardController {
 
         else if (source.getId().contains("oplayer_rr_up")) {
             int currentValue = Integer.parseInt(lb_trade_oplayer_rr.getText());
-            int available = other_resources.getOrDefault("ore", 0);
+            int available = other_resources.getOrDefault("wood", 0);
 
             if (currentValue < available) {
                 updateResourceLabel(lb_trade_oplayer_rr, 1);
@@ -871,6 +871,20 @@ private void placeBuildingImage(double x, double y, String type, String name) {
                 // Do nothing
             }
         }
+
+        pane_trading_desicions.setVisible(false);
+        lb_trade_meplayer_ll.setText("0");
+        lb_trade_oplayer_ll.setText("0");
+        lb_trade_meplayer_ml.setText("0");
+        lb_trade_oplayer_ml.setText("0");
+        lb_trade_meplayer_mid.setText("0");
+        lb_trade_oplayer_mid.setText("0");
+        lb_trade_meplayer_mr.setText("0");
+        lb_trade_oplayer_mr.setText("0");
+        lb_trade_meplayer_rr.setText("0");
+        lb_trade_oplayer_rr.setText("0");
+        trade();
+
     }
 
     private void tradeResources(Player me, Player other, int oreFromMe, int oreFromOther ,String resource) {
