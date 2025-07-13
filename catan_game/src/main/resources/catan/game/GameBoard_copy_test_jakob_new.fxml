@@ -380,21 +380,25 @@
                            </Group>
                            <ToolBar fx:id="toolbar_chooseplayer" layoutY="250.0" prefHeight="50.0" prefWidth="800.0">
                               <items>
-                                 <Button fx:id="btn_toolbar_ll" alignment="CENTER" mnemonicParsing="false" prefWidth="194.0" text="Button" />
-                                 <Button fx:id="btn_toolbar_ml" mnemonicParsing="false" prefWidth="194.0" text="Button" />
-                                 <Button fx:id="btn_toolbar_mr" mnemonicParsing="false" prefWidth="194.0" text="Button" />
-                                 <Button fx:id="btn_toolbar_rr" mnemonicParsing="false" prefHeight="25.0" prefWidth="189.0" text="Button" />
+                                 <Button fx:id="btn_toolbar_ll" alignment="CENTER" mnemonicParsing="false" onAction="#tradeWith" prefWidth="194.0" text="Button" />
+                                 <Button fx:id="btn_toolbar_ml" mnemonicParsing="false" onAction="#tradeWith" prefWidth="194.0" text="Button" />
+                                 <Button fx:id="btn_toolbar_mr" mnemonicParsing="false" onAction="#tradeWith" prefWidth="194.0" text="Button" />
+                                 <Button fx:id="btn_toolbar_rr" mnemonicParsing="false" onAction="#tradeWith" prefHeight="25.0" prefWidth="189.0" text="Bank" />
                               </items>
                            </ToolBar>
-                           <Pane fx:id="pane_trading_desicions" layoutY="300.0" prefHeight="250.0" prefWidth="800.0">
+                           <Pane fx:id="pane_trading_desicions" layoutY="300.0" prefHeight="250.0" prefWidth="800.0" visible="false">
                               <children>
+                                 <Label fx:id="otherPlayer" layoutX="481.0" prefHeight="50.0" prefWidth="91.0" text="Label">
+                                    <font>
+                                       <Font size="22.0" />
+                                    </font>
+                                 </Label>
                                  <Label layoutX="270.0" prefHeight="50.0" prefWidth="211.0" text="Dein Handelspartner: ">
                                     <font>
                                        <Font size="22.0" />
                                     </font>
                                  </Label>
-                                 <ImageView fx:id="img_tradingpartner" fitHeight="50.0" fitWidth="50.0" layoutX="481.0" pickOnBounds="true" preserveRatio="true" />
-                                 <ImageView fx:id="img_trade_commit" fitHeight="100.0" fitWidth="100.0" layoutX="675.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
+                                 <ImageView fx:id="img_trade_commit" fitHeight="100.0" fitWidth="100.0" layoutX="675.0" layoutY="100.0" onMouseClicked="#commitTrade" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                        <Image url="@images/trade_commit.png" />
                                     </image>
@@ -403,8 +407,8 @@
                                     <children>
                                        <Pane fx:id="pane_trading_desicions1" layoutX="25.0" layoutY="50.0" prefHeight="200.0" prefWidth="66.0">
                                           <children>
-                                             <Button fx:id="btn_trade_oplayer_ll_up" minHeight="33.0" mnemonicParsing="false" prefWidth="33.0" text="+" />
-                                             <Button fx:id="btn_trade_oplayer_ll_down" layoutY="33.0" minHeight="33.0" mnemonicParsing="false" prefWidth="33.0" text="-" />
+                                             <Button fx:id="btn_trade_oplayer_ll_up" minHeight="33.0" mnemonicParsing="false" onAction="#increaseResource" prefWidth="33.0" text="+" />
+                                             <Button fx:id="btn_trade_oplayer_ll_down" layoutY="33.0" minHeight="33.0" mnemonicParsing="false" onAction="#increaseResource" prefWidth="33.0" text="-" />
                                              <Label fx:id="lb_trade_oplayer_ll" alignment="CENTER" layoutX="33.0" minHeight="66.0" prefWidth="33.0" text="0" textAlignment="CENTER">
                                                 <font>
                                                    <Font size="40.0" />
@@ -415,8 +419,8 @@
                                                    <Image url="@images/trade_ore.png" />
                                                 </image>
                                              </ImageView>
-                                             <Button fx:id="btn_trade_meplayer_ll_up" layoutY="132.0" minHeight="33.0" mnemonicParsing="false" prefWidth="33.0" text="+" />
-                                             <Button fx:id="btn_trade_meplayer_ll_down" layoutY="165.0" minHeight="33.0" mnemonicParsing="false" prefWidth="33.0" text="-" />
+                                             <Button fx:id="btn_trade_meplayer_ll_up" layoutY="132.0" minHeight="33.0" mnemonicParsing="false" onAction="#increaseResource" prefWidth="33.0" text="+" />
+                                             <Button fx:id="btn_trade_meplayer_ll_down" layoutY="165.0" minHeight="33.0" mnemonicParsing="false" onAction="#increaseResource" prefWidth="33.0" text="-" />
                                              <Label fx:id="lb_trade_meplayer_ll" alignment="CENTER" layoutX="33.0" layoutY="132.0" minHeight="66.0" prefWidth="33.0" text="0">
                                                 <font>
                                                    <Font size="40.0" />
@@ -426,8 +430,8 @@
                                        </Pane>
                                        <Pane fx:id="pane_trading_desicions2" layoutX="146.25" layoutY="50.0" prefHeight="200.0" prefWidth="66.0">
                                           <children>
-                                             <Button fx:id="btn_trade_oplayer_ml_up" minHeight="33.0" mnemonicParsing="false" prefWidth="33.0" text="+" />
-                                             <Button fx:id="btn_trade_oplayer_ml_down" layoutY="33.0" minHeight="33.0" mnemonicParsing="false" prefWidth="33.0" text="-" />
+                                             <Button fx:id="btn_trade_oplayer_ml_up" minHeight="33.0" mnemonicParsing="false" onAction="#increaseResource" prefWidth="33.0" text="+" />
+                                             <Button fx:id="btn_trade_oplayer_ml_down" layoutY="33.0" minHeight="33.0" mnemonicParsing="false" onAction="#increaseResource" prefWidth="33.0" text="-" />
                                              <Label fx:id="lb_trade_oplayer_ml" alignment="CENTER" layoutX="33.0" minHeight="66.0" prefWidth="33.0" text="0">
                                                 <font>
                                                    <Font size="40.0" />
@@ -438,8 +442,8 @@
                                                    <Image url="@images/trade_ziegel.png" />
                                                 </image>
                                              </ImageView>
-                                             <Button fx:id="btn_trade_meplayer_ml_up" layoutY="132.0" minHeight="33.0" mnemonicParsing="false" prefWidth="33.0" text="+" />
-                                             <Button fx:id="btn_trade_meplayer_ml_down" layoutY="165.0" minHeight="33.0" mnemonicParsing="false" prefWidth="33.0" text="-" />
+                                             <Button fx:id="btn_trade_meplayer_ml_up" layoutY="132.0" minHeight="33.0" mnemonicParsing="false" onAction="#increaseResource" prefWidth="33.0" text="+" />
+                                             <Button fx:id="btn_trade_meplayer_ml_down" layoutY="165.0" minHeight="33.0" mnemonicParsing="false" onAction="#increaseResource" prefWidth="33.0" text="-" />
                                              <Label fx:id="lb_trade_meplayer_ml" alignment="CENTER" layoutX="33.0" layoutY="132.0" minHeight="66.0" prefWidth="33.0" text="0">
                                                 <font>
                                                    <Font size="40.0" />
@@ -449,8 +453,8 @@
                                        </Pane>
                                        <Pane fx:id="pane_trading_desicions3" layoutX="267.5" layoutY="50.0" prefHeight="200.0" prefWidth="66.0">
                                           <children>
-                                             <Button fx:id="btn_trade_oplayer_mid_up" minHeight="33.0" mnemonicParsing="false" prefWidth="33.0" text="+" />
-                                             <Button fx:id="btn_trade_oplayer_mid_down" layoutY="33.0" minHeight="33.0" mnemonicParsing="false" prefWidth="33.0" text="-" />
+                                             <Button fx:id="btn_trade_oplayer_mid_up" minHeight="33.0" mnemonicParsing="false" onAction="#increaseResource" prefWidth="33.0" text="+" />
+                                             <Button fx:id="btn_trade_oplayer_mid_down" layoutY="33.0" minHeight="33.0" mnemonicParsing="false" onAction="#increaseResource" prefWidth="33.0" text="-" />
                                              <Label fx:id="lb_trade_oplayer_mid" alignment="CENTER" layoutX="33.0" minHeight="66.0" prefWidth="33.0" text="0">
                                                 <font>
                                                    <Font size="40.0" />
@@ -461,8 +465,8 @@
                                                    <Image url="@images/trade_sheep.png" />
                                                 </image>
                                              </ImageView>
-                                             <Button fx:id="btn_trade_meplayer_mid_up" layoutY="132.0" minHeight="33.0" mnemonicParsing="false" prefWidth="33.0" text="+" />
-                                             <Button fx:id="btn_trade_meplayer_mid_down" layoutY="165.0" minHeight="33.0" mnemonicParsing="false" prefWidth="33.0" text="-" />
+                                             <Button fx:id="btn_trade_meplayer_mid_up" layoutY="132.0" minHeight="33.0" mnemonicParsing="false" onAction="#increaseResource" prefWidth="33.0" text="+" />
+                                             <Button fx:id="btn_trade_meplayer_mid_down" layoutY="165.0" minHeight="33.0" mnemonicParsing="false" onAction="#increaseResource" prefWidth="33.0" text="-" />
                                              <Label fx:id="lb_trade_meplayer_mid" alignment="CENTER" layoutX="33.0" layoutY="132.0" minHeight="66.0" prefWidth="33.0" text="0">
                                                 <font>
                                                    <Font size="40.0" />
@@ -472,8 +476,8 @@
                                        </Pane>
                                        <Pane fx:id="pane_trading_desicions4" layoutX="388.75" layoutY="50.0" prefHeight="200.0" prefWidth="66.0">
                                           <children>
-                                             <Button fx:id="btn_trade_oplayer_mr_up" minHeight="33.0" mnemonicParsing="false" prefWidth="33.0" text="+" />
-                                             <Button fx:id="btn_trade_oplayer_mr_down" layoutY="33.0" minHeight="33.0" mnemonicParsing="false" prefWidth="33.0" text="-" />
+                                             <Button fx:id="btn_trade_oplayer_mr_up" minHeight="33.0" mnemonicParsing="false" onAction="#increaseResource" prefWidth="33.0" text="+" />
+                                             <Button fx:id="btn_trade_oplayer_mr_down" layoutY="33.0" minHeight="33.0" mnemonicParsing="false" onAction="#increaseResource" prefWidth="33.0" text="-" />
                                              <Label fx:id="lb_trade_oplayer_mr" alignment="CENTER" layoutX="33.0" minHeight="66.0" prefWidth="33.0" text="0">
                                                 <font>
                                                    <Font size="40.0" />
@@ -484,8 +488,8 @@
                                                    <Image url="@images/trade_wheat.png" />
                                                 </image>
                                              </ImageView>
-                                             <Button fx:id="btn_trade_meplayer_mr_up" layoutY="132.0" minHeight="33.0" mnemonicParsing="false" prefWidth="33.0" text="+" />
-                                             <Button fx:id="btn_trade_meplayer_mr_down" layoutY="165.0" minHeight="33.0" mnemonicParsing="false" prefWidth="33.0" text="-" />
+                                             <Button fx:id="btn_trade_meplayer_mr_up" layoutY="132.0" minHeight="33.0" mnemonicParsing="false" onAction="#increaseResource" prefWidth="33.0" text="+" />
+                                             <Button fx:id="btn_trade_meplayer_mr_down" layoutY="165.0" minHeight="33.0" mnemonicParsing="false" onAction="#increaseResource" prefWidth="33.0" text="-" />
                                              <Label fx:id="lb_trade_meplayer_mr" alignment="CENTER" layoutX="33.0" layoutY="132.0" minHeight="66.0" prefWidth="33.0" text="0">
                                                 <font>
                                                    <Font size="40.0" />
@@ -495,8 +499,8 @@
                                        </Pane>
                                        <Pane fx:id="pane_trading_desicions5" layoutX="510.0" layoutY="50.0" prefHeight="200.0" prefWidth="66.0">
                                           <children>
-                                             <Button fx:id="btn_trade_oplayer_rr_up" minHeight="33.0" mnemonicParsing="false" prefWidth="33.0" text="+" />
-                                             <Button fx:id="btn_trade_oplayer_rr_down" layoutY="33.0" minHeight="33.0" mnemonicParsing="false" prefWidth="33.0" text="-" />
+                                             <Button fx:id="btn_trade_oplayer_rr_up" minHeight="33.0" mnemonicParsing="false" onAction="#increaseResource" prefWidth="33.0" text="+" />
+                                             <Button fx:id="btn_trade_oplayer_rr_down" layoutY="33.0" minHeight="33.0" mnemonicParsing="false" onAction="#increaseResource" prefWidth="33.0" text="-" />
                                              <Label fx:id="lb_trade_oplayer_rr" alignment="CENTER" layoutX="33.0" minHeight="66.0" prefWidth="33.0" text="0">
                                                 <font>
                                                    <Font size="40.0" />
@@ -507,8 +511,8 @@
                                                    <Image url="@images/trade_wood.png" />
                                                 </image>
                                              </ImageView>
-                                             <Button fx:id="btn_trade_meplayer_rr_up" layoutY="132.0" minHeight="33.0" mnemonicParsing="false" prefWidth="33.0" text="+" />
-                                             <Button fx:id="btn_trade_meplayer_rr_down" layoutY="165.0" minHeight="33.0" mnemonicParsing="false" prefWidth="33.0" text="-" />
+                                             <Button fx:id="btn_trade_meplayer_rr_up" layoutY="132.0" minHeight="33.0" mnemonicParsing="false" onAction="#increaseResource" prefWidth="33.0" text="+" />
+                                             <Button fx:id="btn_trade_meplayer_rr_down" layoutY="165.0" minHeight="33.0" mnemonicParsing="false" onAction="#increaseResource" prefWidth="33.0" text="-" />
                                              <Label fx:id="lb_trade_meplayer_rr" alignment="CENTER" layoutX="33.0" layoutY="132.0" minHeight="66.0" prefWidth="33.0" text="0">
                                                 <font>
                                                    <Font size="40.0" />
@@ -641,9 +645,9 @@
                                     <Image url="@images/Dorf.png" />
                                  </image>
                               </ImageView>
-                              <ImageView fitHeight="90.0" fitWidth="75.0">
+                              <ImageView fitHeight="100.0" fitWidth="100.0">
                                  <image>
-                                    <Image url="@images/Handel.png" />
+                                    <Image url="@images/Trade_Picture.png" />
                                  </image>
                               </ImageView>
                               <ImageView fitHeight="90.0" fitWidth="75.0" GridPane.columnIndex="1" GridPane.rowIndex="1">

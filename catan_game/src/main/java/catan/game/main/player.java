@@ -62,4 +62,8 @@ public class Player {
     public String getName() {
         return name;
     }
+
+    public void removeResource(String type, int amount){
+        resources.put(type, resources.get(type) - amount);
+    }
 }

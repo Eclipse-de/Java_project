@@ -99,6 +99,13 @@ public class GameEngine {
         return players.get(currentPlayerIndex);
     }
 
+    public Player getNextPlayer(int next) {
+        int size = players.size();
+        int nextIndex = (currentPlayerIndex + next) % size;
+        return players.get(nextIndex);
+    }
+
+
     public int rollDice() {
         int die1 = (int)(Math.random() * 6) + 1;
         int die2 = (int)(Math.random() * 6) + 1;
