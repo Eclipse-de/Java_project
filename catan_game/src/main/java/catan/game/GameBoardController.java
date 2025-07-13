@@ -27,7 +27,7 @@ public class GameBoardController {
     private GameEngine gameEngine;
     private List<String> resources;
 
-    private enum BuildMode { NONE, ROAD, VILLAGE, CITY }
+    private enum BuildMode { NONE, ROAD, VILLAGE, CITY, TRADE}
     private BuildMode currentBuildMode = BuildMode.NONE;
 
     public void setGameEngine(GameEngine gameEngine) {
@@ -60,6 +60,9 @@ public class GameBoardController {
     private Label playerName;
 
     @FXML
+    private Pane pane_tradingwindow;
+
+    @FXML
     private void street(ActionEvent event) {
         if (currentBuildMode == BuildMode.ROAD) {
             currentBuildMode = BuildMode.NONE;
@@ -71,8 +74,11 @@ public class GameBoardController {
 
     @FXML
     private void handeln(ActionEvent event) {
-        System.out.println("Handeln gedrückt!");
-        currentBuildMode = BuildMode.NONE;
+        if (currentBuildMode == BuildMode.TRADE) {
+            currentBuildMode = BuildMode.NONE;
+        } else {
+            currentBuildMode = BuildMode.TRADE;
+        }
         highlightBuildMode(currentBuildMode);
     }
 
@@ -99,10 +105,12 @@ public class GameBoardController {
         // Beide unsichtbar machen
         streetPane.setVisible(false);
         buildingPane.setVisible(false);
+        pane_tradingwindow.setVisible(false);
 
         switch (mode) {
             case ROAD -> streetPane.setVisible(true);
             case VILLAGE, CITY -> buildingPane.setVisible(true);
+            case TRADE -> pane_tradingwindow.setVisible(true);
             default -> {
                 // NONE or any other case: both panes remain invisible
             }
